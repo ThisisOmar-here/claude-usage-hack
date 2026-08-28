@@ -1,10 +1,19 @@
+# Fires a one-word Claude routine every day at a fixed time, so your 5-hour
+# Pro/Max usage window opens when you want it to. See the README, "Hack 2".
+
 name: Trigger Claude Session Anchor
 
 on:
   schedule:
-    # 06:00 UTC ≈ 9:00 AM in Jordan/Gulf (UTC+3). Adjust to your own timezone.
+    # ┌── minute
+    # │ ┌── hour (UTC — always UTC, never your local time)
+    # │ │
+    # 06:00 UTC = 9:00 AM in UTC+3 (Amman, Riyadh). Change to your own time;
+    # the README has a conversion table.
     - cron: '0 6 * * *'
-  workflow_dispatch: {}  # lets you fire it manually from the Actions tab too
+
+  # Lets you fire it by hand from the Actions tab (good for testing).
+  workflow_dispatch: {}
 
 jobs:
   fire:
@@ -15,7 +24,17 @@ jobs:
           CLAUDE_ROUTINE_URL: ${{ secrets.CLAUDE_ROUTINE_URL }}
           CLAUDE_ROUTINE_TOKEN: ${{ secrets.CLAUDE_ROUTINE_TOKEN }}
         run: |
-          curl -sS -X POST "$CLAUDE_ROUTINE_URL" \
+          if [ -z "$CLAUDE_ROUTINE_URL" ] || [ -z "$CLAUDE_ROUTINE_TOKEN" ]; then
+            echo "::error::Missing repo secrets. Add CLAUDE_ROUTINE_URL and CLAUDE_ROUTINE_TOKEN under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+          # --fail makes a 401/404/500 fail the workflow instead of passing
+          # quietly with an error body, so a broken token is visible.
+          curl --fail-with-body -sS -X POST "$CLAUDE_ROUTINE_URL" \
             -H "Authorization: Bearer $CLAUDE_ROUTINE_TOKEN" \
             -H "Content-Type: application/json" \
             -d '{"text": "say hi"}'
+
+          echo
+          echo "Session anchor fired."
