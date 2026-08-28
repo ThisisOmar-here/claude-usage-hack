@@ -1,0 +1,21 @@
+name: Trigger Claude Session Anchor
+
+on:
+  schedule:
+    # 06:00 UTC ≈ 9:00 AM in Jordan/Gulf (UTC+3). Adjust to your own timezone.
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}  # lets you fire it manually from the Actions tab too
+
+jobs:
+  fire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fire the routine
+        env:
+          CLAUDE_ROUTINE_URL: ${{ secrets.CLAUDE_ROUTINE_URL }}
+          CLAUDE_ROUTINE_TOKEN: ${{ secrets.CLAUDE_ROUTINE_TOKEN }}
+        run: |
+          curl -sS -X POST "$CLAUDE_ROUTINE_URL" \
+            -H "Authorization: Bearer $CLAUDE_ROUTINE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"text": "say hi"}'
