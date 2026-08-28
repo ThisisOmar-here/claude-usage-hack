@@ -39,7 +39,7 @@ Hack 1 is the one to start with. Do Hack 2 only if the ~10 minute stagger actual
 
 Claude can schedule *itself*. You are just telling it to say hi to you every morning.
 
-<img width="896" height="702" alt="image" src="https://github.com/user-attachments/assets/bc8e00a1-4075-4bff-ac34-8cc3c73b880c" />
+<img width="600" height="600" alt="image" src="https://github.com/user-attachments/assets/bc8e00a1-4075-4bff-ac34-8cc3c73b880c" />
 
 
 1. Open **[claude.ai/code/routines](https://claude.ai/code/routines)** (in the Claude Code app this is `/schedule`).
